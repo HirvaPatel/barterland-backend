@@ -1,26 +1,34 @@
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
+const mongoose = require("mongoose")
 
 const app = express();
 
+app.use(express.urlencoded({extended: true}))
+
 app.use(express.json());
 
-var mongo = require('./mongo');
 
 
-mongo.connectDB(async (err) => {
-    if (err) throw err;
+//var mongo = require('./mongo');
 
-    // Mongo test implementation
-    const db = mongo.getDatabase();
-    const usersCollection = db.collection('users').find().toArray()
-        .then(results => {
-            console.log(results)
-        })
-        .catch(error => console.error(error));
+ const mongoUrl = 'mongodb+srv://admin:Password123@barterland-g16-web-proj.bypz4.mongodb.net/barterland?retryWrites=true&w=majority';
+
+mongoose.connect(mongoUrl,{useNewUrlParser: true})
+.then (() =>{
+    console.log("connected to mongoDB")
+
+})
+.catch((err)=>{
+    console.log("Connection Failed", err)
+}) 
 
 
+    const rootRoute ='/api';
+
+    const UserRoute = require("./api/routes/users");
+    app.use(rootRoute, UserRoute); 
 
     app.use(function (req, res) {
         res.status(404);
@@ -31,6 +39,6 @@ mongo.connectDB(async (err) => {
         return;
     });
 
-});
+
 
 module.exports = app;
