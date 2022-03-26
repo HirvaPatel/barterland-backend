@@ -1,3 +1,4 @@
+const mongoose = require("mongoose")
 
 const MongoClient = require('mongodb').MongoClient
 const connectionString = 'mongodb+srv://admin:Password123@barterland-g16-web-proj.bypz4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
