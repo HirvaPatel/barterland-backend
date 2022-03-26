@@ -8,6 +8,7 @@ app.use(express.json());
 
 var mongo = require('./mongo');
 
+const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
 
 mongo.connectDB(async (err) => {
     if (err) throw err;
@@ -16,7 +17,7 @@ mongo.connectDB(async (err) => {
     const db = mongo.getDatabase();
     const usersCollection = db.collection('users').find().toArray()
         .then(results => {
-            console.log(results)
+            //  console.log(results)
         })
         .catch(error => console.error(error));
 
@@ -32,5 +33,20 @@ mongo.connectDB(async (err) => {
     });
 
 });
+
+app.use("*", (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+    res.setHeader("Access-Control-Max-Age", "3600");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Accept, X-Requested-With, Authorization"
+    );
+    next();
+});
+
+app.use("/wishlist", wishlistRoute);
+
 
 module.exports = app;
