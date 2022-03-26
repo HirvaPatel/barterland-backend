@@ -1,10 +1,12 @@
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 var mongo = require('./mongo');
 
