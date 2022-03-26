@@ -23,9 +23,115 @@ mongoose.connect(mongoUrl,{useNewUrlParser: true})
 }) 
 
 
+//To find if the user is present and allow them to login into the application(Login)
+
+router.post("/login", (req, res) => {
+
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).json({ message: "Invalid Inputs.", success: false });
+}
+
+    users.findOne({ email: req.body.email }).then((user) => {
+        bcrypt.compare(req.body.password, user.password) .then((passwordCheck) => {
+            if(!passwordCheck) {
+              return res.status(400).send({
+                message: "Passwords does not match",
+                error,
+                success: false
+              });
+            }
+            res.status(200).send({
+              message: "Login Successful",
+              email: user.email,
+              user_id: user.user_id,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              role: user.role,
+              address: user.address,
+              success: true
+            });
+          })
+          .catch((error) => {
+            res.status(400).send({
+              message: "Passwords does not match",
+              error,
+              success: false
+            });
+          });
+      })
+      .catch((e) => {
+        res.status(404).send({
+          message: "Email not found",
+          e,
+          success: false
+        });
+      });
+  });
+    
+
+// To add a user to the application (Registration)
+router.post('/register',(req,res)=>{
+
+  if (!req.body.email || !req.body.first_name || !req.body.last_name || !req.body.security_ques || !req.body.security_ans || !req.body.password || !req.body.address) {
+    return res.status(400).json({ message: "Invalid Inputs.", success: false });
+}
 
 
-//To find if the user email exist
+    var user_id =  uuid.v4();
+    var email = req.body.email;
+    //var password = req.body.password;
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var role = "user";
+    var created_at = Date.now();
+    var security_ques = req.body.security_ques;
+    var security_ans = req.body.security_ans;
+    var address = req.body.address;
+
+    bcrypt.hash(req.body.password, 10)
+  .then((hashedPassword) => {
+    const newUser = new users({
+            _id : new mongoose.Types.ObjectId,
+            user_id,
+            email,
+            password: hashedPassword,
+            first_name,
+            last_name,
+            role,
+            created_at,
+            security_ques,
+            security_ans,
+            address
+
+    })
+
+    newUser.save().then(result =>{
+        console.log(result);
+        return res.status(200).json({
+            message: "User Registered!!",
+            success: true
+        })
+    }).catch(error=>{
+        console.log(error);
+        return res.status(400).json({
+            message: "Internal server error",
+            success: false
+        })
+    })   
+
+}).catch((e) => {
+    response.status(400).send({
+      message: "Password was not hashed successfully",
+      e,
+    });
+  });
+});
+
+
+
+
+
+//To find if the user email exist before forgot password step
 router.post("/finduser",(req,res)=>{
 
   if (!req.body.email) {
@@ -51,6 +157,51 @@ router.post("/finduser",(req,res)=>{
   });
 
 })
+
+
+
+//To update forgotten password
+
+router.post("/forgotpassword",(req,res)=>{
+
+  if (!req.body.password || !req.body.security_ans) {
+    return res.status(400).json({ message: "Invalid Inputs.", success: false });
+}
+  users.findOne({ email: req.body.email}).then((user) => {
+    if(req.body.security_ans === user.security_ans){
+
+      bcrypt.hash(req.body.password, 10, function(err, hash) {
+        if(err){
+            return next(err);
+        }
+        user.password = hash;
+        user.save();
+    });
+      return res.status(200).send({
+        message: "Password Updated",
+        success: true
+      });
+    }else{
+        return res.status(404).send({
+          message: "Security answer is incorrect",
+          e,
+          success: false
+        });
+    
+    }
+
+  }).catch((e) => {
+    res.status(404).send({
+      message: "Security answer is incorrect",
+      e,
+      success: false
+    });
+  });
+
+})
+
+
+
 
 //To update address
 router.post("/updateaddress",(req,res)=>{
@@ -177,101 +328,6 @@ router.post("/updatepassword",(req,res)=>{
 })
 
 
-
-
-//To update forgotten password
-
-router.post("/forgotpassword",(req,res)=>{
-
-  if (!req.body.password || !req.body.security_ans) {
-    return res.status(400).json({ message: "Invalid Inputs.", success: false });
-}
-  users.findOne({ email: req.body.email}).then((user) => {
-    if(req.body.security_ans === user.security_ans){
-
-      bcrypt.hash(req.body.password, 10, function(err, hash) {
-        if(err){
-            return next(err);
-        }
-        user.password = hash;
-        user.save();
-    });
-      return res.status(200).send({
-        message: "Password Updated",
-        success: true
-      });
-    }else{
-        return res.status(404).send({
-          message: "Security answer is incorrect",
-          e,
-          success: false
-        });
-    
-    }
-
-  }).catch((e) => {
-    res.status(404).send({
-      message: "Security answer is incorrect",
-      e,
-      success: false
-    });
-  });
-
-})
-
-
-
-
-
-
-
-
-
-
-//To find if the user is present
- router.post("/login", (req, res) => {
-
-  if (!req.body.email || !req.body.password) {
-    return res.status(400).json({ message: "Invalid Inputs.", success: false });
-}
-
-    users.findOne({ email: req.body.email }).then((user) => {
-        bcrypt.compare(req.body.password, user.password) .then((passwordCheck) => {
-            if(!passwordCheck) {
-              return res.status(400).send({
-                message: "Passwords does not match",
-                error,
-                success: false
-              });
-            }
-            res.status(200).send({
-              message: "Login Successful",
-              email: user.email,
-              user_id: user.user_id,
-              first_name: user.first_name,
-              last_name: user.last_name,
-              role: user.role,
-              address: user.address,
-              success: true
-            });
-          })
-          .catch((error) => {
-            res.status(400).send({
-              message: "Passwords does not match",
-              error,
-              success: false
-            });
-          });
-      })
-      .catch((e) => {
-        res.status(404).send({
-          message: "Email not found",
-          e,
-          success: false
-        });
-      });
-  });
-    
   
 // To retrieve all the users present
 router.get('/users',(req,res)=>{
@@ -295,63 +351,6 @@ router.get('/users',(req,res)=>{
 
 })
 
-// To add a user to the application.
-router.post('/register',(req,res)=>{
-
-  if (!req.body.email || !req.body.first_name || !req.body.last_name || !req.body.security_ques || !req.body.security_ans || !req.body.password || !req.body.address) {
-    return res.status(400).json({ message: "Invalid Inputs.", success: false });
-}
-
-
-    var user_id =  uuid.v4();
-    var email = req.body.email;
-    //var password = req.body.password;
-    var first_name = req.body.first_name;
-    var last_name = req.body.last_name;
-    var role = "user";
-    var created_at = Date.now();
-    var security_ques = req.body.security_ques;
-    var security_ans = req.body.security_ans;
-    var address = req.body.address;
-
-    bcrypt.hash(req.body.password, 10)
-  .then((hashedPassword) => {
-    const newUser = new users({
-            _id : new mongoose.Types.ObjectId,
-            user_id,
-            email,
-            password: hashedPassword,
-            first_name,
-            last_name,
-            role,
-            created_at,
-            security_ques,
-            security_ans,
-            address
-
-    })
-
-    newUser.save().then(result =>{
-        console.log(result);
-        return res.status(200).json({
-            message: "User Registered!!",
-            success: true
-        })
-    }).catch(error=>{
-        console.log(error);
-        return res.status(400).json({
-            message: "Internal server error",
-            success: false
-        })
-    })   
-
-}).catch((e) => {
-    response.status(400).send({
-      message: "Password was not hashed successfully",
-      e,
-    });
-  });
-});
 
 
 module.exports=router;
