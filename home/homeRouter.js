@@ -55,8 +55,7 @@ mongo.connectDB(async (err) => {
                     let proposedDeal = {};
                     if (deals.length > 0) {
                         deals.forEach(function (deal, index) {
-                            if (deal.user_id === parseInt(user_id)) {
-                                console.log('Here');
+                            if ((deal.user_id === user_id) && (deal.is_active && deal.is_active === true)) {
                                 isDealProposed = true;
                                 proposedDeal = deal;
                             }
@@ -108,7 +107,8 @@ mongo.connectDB(async (err) => {
                 if (results) {
                     const deal = {
                         "deal_id": Math.random().toString(36).slice(2),
-                        "user_id": parseInt(request.user_id),
+                        "user_id": request.user_id,
+                        "is_active": true,
                         "deal_details":
                         {
                             "name": request.name,
@@ -138,6 +138,50 @@ mongo.connectDB(async (err) => {
                     const response = {
                         success: true,
                         message: 'Deal proposed!'
+                    }
+                    return res.status(200).json(response);
+                }
+                const response = {
+                    success: false,
+                    message: 'Ad not found!'
+                }
+                return res.status(400).json(response);
+            })
+            .catch(error => {
+                console.error(error);
+                const response = {
+                    success: false,
+                    message: 'Something went wrong.'
+                }
+                return res.status(500).json(response);
+            });
+    });
+
+    router.delete("/posts/:id/deals/:deal_id", (req, res) => {
+        const ad_id = req.params.id;
+        const deal_id = req.params.deal_id;
+        const db = mongo.getDatabase();
+        db.collection('advertisments').findOne({ 'ad_id': parseInt(ad_id) })
+            .then(results => {
+                console.log(results);
+                if (results) {
+
+                    const result = db.collection('advertisments')
+                        .updateOne({ 'ad_id': parseInt(ad_id) , 'deals.deal_id' : deal_id },
+                            { $set: { 'deals.$.is_active' : false } }).then(result => {
+                                console.log('Updated!');
+                                console.log(result);
+                            }).catch(err => {
+                                console.log(err);
+                                const response = {
+                                    success: false,
+                                    message: 'Something went wrong.'
+                                }
+                                return res.status(500).json(response);
+                            });
+                    const response = {
+                        success: true,
+                        message: 'Deal deleted!'
                     }
                     return res.status(200).json(response);
                 }
