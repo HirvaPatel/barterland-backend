@@ -2,9 +2,13 @@ const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
 const myAdsRoute = require("./routes/getMyAdsRoute");
+const updateMyAdRoute = require("./routes/updateMyAdRoute");
+const deleteMyRoute = require("./routes/deleteMyAdRoute");
+var cors = require("cors");
 
 const app = express();
 
+app.use(cors({ origin: true }));
 app.use(express.json());
 
 var mongo = require("./mongo");
@@ -39,4 +43,6 @@ app.get("/", (req, res, next) => {
   res.send("Welcome to the Barterland Backend");
 });
 app.use("/myads", myAdsRoute);
+app.use("/updatemyad", updateMyAdRoute);
+app.use("/deletemyad", deleteMyRoute);
 module.exports = app;
