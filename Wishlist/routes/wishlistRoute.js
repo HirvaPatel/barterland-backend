@@ -5,13 +5,13 @@ const wishlistRouter = express.Router();
 var mongo = require('../../mongo');
 
 
-wishlistRouter.get("/user", async (req, res) => {
+wishlistRouter.get("/user/:id", async (req, res) => {
 
     mongo.connectDB(async (err) => {
         if (err) throw err;
 
         var wishlistproducts = [];
-        const userid = req.headers.user_id;
+        const userid = req.params.id;
         const db = mongo.getDatabase();
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
