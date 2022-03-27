@@ -4,7 +4,7 @@ const res = require("express/lib/response");
 const wishlistRouter = express.Router();
 var mongo = require('../../mongo');
 
-
+// Getting all the items of the wishlist
 wishlistRouter.get("/user/:id", async (req, res) => {
 
     mongo.connectDB(async (err) => {
@@ -27,6 +27,7 @@ wishlistRouter.get("/user/:id", async (req, res) => {
     });
 });
 
+// Removing specific item from the wishlist
 wishlistRouter.put("/remove/:id", async (req, res) => {
 
     let productid = parseInt(req.params.id);
@@ -56,6 +57,7 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
 });
 
 
+// Adding specific item in the wishlist
 wishlistRouter.put("/add/:id", async (req, res) => {
 
     let productid = parseInt(req.params.id);
