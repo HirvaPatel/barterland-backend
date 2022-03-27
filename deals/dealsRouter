@@ -26,7 +26,7 @@ mongo.connectDB(async (err) => {
                         input: "$deals",
                         as: "deals",
                         cond: {
-                            $eq: ["$$deals.user_id", parseInt(user_id)]
+                            $eq: ["$$deals.user_id", user_id]
                         }
                     }
                 }
@@ -36,7 +36,13 @@ mongo.connectDB(async (err) => {
             let finalResult = []
             results.forEach(r => {
                 if (r.deals.length > 0) {
-                    finalResult.push(r);
+                    const deals = r.deals.slice().reverse();
+                    for (let i = 0; i < deals.length; i++) {
+                        if ((deals[i].is_active && deals[i].is_active === true)) {
+                            finalResult.push(r);
+                            break;
+                        }
+                    }
                 }
             });
 
