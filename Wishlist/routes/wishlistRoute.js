@@ -1,7 +1,6 @@
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
-//const users = require('../model/users');
 const wishlistRouter = express.Router();
 var mongo = require('../../mongo');
 
@@ -12,7 +11,7 @@ wishlistRouter.get("/user", async (req, res) => {
         if (err) throw err;
 
         var wishlistproducts = [];
-        const userid = "5c7b8740-0917-42bd-9c47-74700fa575fb";
+        const userid = req.headers.user_id;
         const db = mongo.getDatabase();
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
@@ -30,13 +29,13 @@ wishlistRouter.get("/user", async (req, res) => {
 
 wishlistRouter.put("/remove/:id", async (req, res) => {
 
-    const productid = parseInt(req.params.id);
+    let productid = parseInt(req.params.id);
 
     mongo.connectDB(async (err) => {
         if (err) throw err;
 
         var wishlistproducts = [];
-        const userid = "5c7b8740-0917-42bd-9c47-74700fa575fb";
+        const userid = req.headers.user_id;
         const db = mongo.getDatabase();
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
@@ -44,7 +43,9 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
 
         ids = ids.filter(item => item !== productid);
         console.log(ids);
-        
+
+        const user2 = await db.collection('users').updateOne({ "user_id": userid }, { $set: { "wishlist": ids } });
+
         for (let i = 0; i < ids.length; i++) {
 
             const product = await db.collection('advertisments').find({ "ad_id": ids[i] }).toArray();
@@ -54,6 +55,34 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
         return res.status(200).json({ success: "true", data: wishlistproducts });
     });
 });
+
+
+wishlistRouter.put("/add/:id", async (req, res) => {
+
+    let productid = parseInt(req.params.id);
+
+    mongo.connectDB(async (err) => {
+        if (err) throw err;
+
+        var wishlistproducts = [];
+        const userid = req.headers.user_id;
+        const db = mongo.getDatabase();
+
+        const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
+        let ids = user[0]["wishlist"];
+        console.log(ids);
+        ids.push(productid);
+
+        console.log(ids);
+
+        const user2 = await db.collection('users').updateOne({ "user_id": userid }, { $set: { "wishlist": ids } });
+
+        return res.status(200).json({ success: "true" });
+    });
+});
+
+
+
 
 
 module.exports = wishlistRouter;
