@@ -15,12 +15,16 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors());
 app.use(express.json());
 
+var mongo = require('./mongo');
+
+const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
 
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
 
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
+app.use("/wishlist", wishlistRoute);
 
 app.use(function (req, res) {
     res.status(404);
@@ -30,6 +34,19 @@ app.use(function (req, res) {
     res.json(response);
     return;
 });
+
+app.use("*", (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+    res.setHeader("Access-Control-Max-Age", "3600");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Accept, X-Requested-With, Authorization"
+    );
+    next();
+});
+
 
 
 module.exports = app;
