@@ -42,7 +42,6 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
         let ids = user[0]["wishlist"];
 
         ids = ids.filter(item => item !== productid);
-        console.log(ids);
 
         const user2 = await db.collection('users').updateOne({ "user_id": userid }, { $set: { "wishlist": ids } });
 
@@ -70,19 +69,13 @@ wishlistRouter.put("/add/:id", async (req, res) => {
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
         let ids = user[0]["wishlist"];
-        console.log(ids);
         ids.push(productid);
-
-        console.log(ids);
 
         const user2 = await db.collection('users').updateOne({ "user_id": userid }, { $set: { "wishlist": ids } });
 
         return res.status(200).json({ success: "true" });
     });
 });
-
-
-
 
 
 module.exports = wishlistRouter;
