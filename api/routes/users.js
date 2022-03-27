@@ -172,13 +172,14 @@ router.post("/finduser", (req, res) => {
 router.post("/forgotpassword", (req, res) => {
 
   if (!req.body.password || !req.body.security_ans || !req.body.email) {
+    console.log('Invalid Input');
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
 
   users.findOne({ email: req.body.email }).then((user) => {
 
     if (req.body.security_ans === user.security_ans) {
-
+      console.log('Correct answer');
       bcrypt.compare(req.body.password, user.password).then((passwordCheck) => {
         if (!passwordCheck) {
           console.log(passwordCheck);
@@ -189,23 +190,20 @@ router.post("/forgotpassword", (req, res) => {
             user.password = hash;
             user.save();
           });
-          return res.status(200).send({
+
+          return res.status(200).json({
             message: "Password Updated Successfully!!",
             success: true
           });
+        } else {
+          return res.status(400).json({
+            message: "Old password cannot be same as new password",
+            success: false
+          });
         }
       }).catch((error) => {
-        return res.status(500).send({
-          message: "Something went wrong",
-          success: false
-        });
+        console.log(error);
       });
-
-      return res.status(400).send({
-        message: "Old password cannot be same as new password",
-        success: false
-      });
-
 
     } else {
       return res.status(400).send({
@@ -216,16 +214,13 @@ router.post("/forgotpassword", (req, res) => {
     }
 
   }).catch((e) => {
-    res.status(400).send({
+    return res.status(400).send({
       message: "Try again!",
-      e,
       success: false
     });
   });
 
 })
-
-
 
 
 //To update address
