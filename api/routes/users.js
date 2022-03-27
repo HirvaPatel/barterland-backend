@@ -138,16 +138,16 @@ router.post('/register', (req, res) => {
 
 
 //To find if the user email exist before forgot password step
-router.post("/finduser",(req,res)=>{
+router.post("/finduser", (req, res) => {
 
   if (!req.body.email) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
-}
-  
+  }
+
   users.findOne({ email: req.body.email }).then((user) => {
     return res.status(200).send({
       message: "User found",
-      user_id : user.user_id,
+      user_id: user.user_id,
       email: user.email,
       security_ques: user.security_ques,
       security_ans: user.security_ans,
@@ -174,32 +174,50 @@ router.post("/forgotpassword", (req, res) => {
   if (!req.body.password || !req.body.security_ans || !req.body.email) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
+
   users.findOne({ email: req.body.email }).then((user) => {
+
     if (req.body.security_ans === user.security_ans) {
 
-      bcrypt.hash(req.body.password, 10, function (err, hash) {
-        if (err) {
-          return next(err);
+      bcrypt.compare(req.body.password, user.password).then((passwordCheck) => {
+        if (!passwordCheck) {
+          console.log(passwordCheck);
+          bcrypt.hash(req.body.password, 10, function (err, hash) {
+            if (err) {
+              return next(err);
+            }
+            user.password = hash;
+            user.save();
+          });
+          return res.status(200).send({
+            message: "Password Updated Successfully!!",
+            success: true
+          });
         }
-        user.password = hash;
-        user.save();
+      }).catch((error) => {
+        return res.status(500).send({
+          message: "Something went wrong",
+          success: false
+        });
       });
-      return res.status(200).send({
-        message: "Password Updated Successfully!!",
-        success: true
+
+      return res.status(400).send({
+        message: "Old password cannot be same as new password",
+        success: false
       });
+
+
     } else {
-      return res.status(404).send({
+      return res.status(400).send({
         message: "Security answer is incorrect, Try again!",
-        e,
         success: false
       });
 
     }
 
   }).catch((e) => {
-    res.status(404).send({
-      message: "Security answer is incorrect, Try again!",
+    res.status(400).send({
+      message: "Try again!",
       e,
       success: false
     });
@@ -213,7 +231,7 @@ router.post("/forgotpassword", (req, res) => {
 //To update address
 router.post("/updateaddress", (req, res) => {
 
-  if (!req.body.address) {
+  if (!req.body.address || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -257,7 +275,7 @@ router.post("/delete", (req, res) => {
 //To update Name
 router.post("/updatename", (req, res) => {
 
-  if (!req.body.first_name || !req.body.last_name) {
+  if (!req.body.first_name || !req.body.last_name || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -285,7 +303,7 @@ router.post("/updatename", (req, res) => {
 //To update email
 router.post("/updateemail", (req, res) => {
 
-  if (!req.body.email) {
+  if (!req.body.email || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -312,7 +330,7 @@ router.post("/updateemail", (req, res) => {
 
 router.post("/updatepassword", (req, res) => {
 
-  if (!req.body.oldpassword || !req.body.newpassword) {
+  if (!req.body.oldpassword || !req.body.newpassword || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
 
