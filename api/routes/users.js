@@ -61,7 +61,7 @@ router.post("/login", (req, res) => {
   })
     .catch((e) => {
       res.status(404).send({
-        message: "Email not found, Try again!",
+        message: "User not found, Try again!",
         e,
         success: false
       });
@@ -137,41 +137,26 @@ router.post('/register', (req, res) => {
 });
 
 
+//To find if the user email exist before forgot password step
+router.post("/finduser", (req, res) => {
 
-
-//To update forgotten password
-
-router.post("/forgotpassword", (req, res) => {
-
-  if (!req.body.password || !req.body.security_ans) {
+  if (!req.body.email) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
+
   users.findOne({ email: req.body.email }).then((user) => {
-    if (req.body.security_ans === user.security_ans) {
-
-      bcrypt.hash(req.body.password, 10, function (err, hash) {
-        if (err) {
-          return next(err);
-        }
-        user.password = hash;
-        user.save();
-      });
-      return res.status(200).send({
-        message: "Password Updated Successfully!!",
-        success: true
-      });
-    } else {
-      return res.status(404).send({
-        message: "Security answer is incorrect, Try again!",
-        e,
-        success: false
-      });
-
-    }
+    return res.status(200).send({
+      message: "User found",
+      user_id: user.user_id,
+      email: user.email,
+      security_ques: user.security_ques,
+      security_ans: user.security_ans,
+      success: true
+    });
 
   }).catch((e) => {
     res.status(404).send({
-      message: "Security answer is incorrect, Try again!",
+      message: "Email not found",
       e,
       success: false
     });
@@ -182,10 +167,66 @@ router.post("/forgotpassword", (req, res) => {
 
 
 
+//To update forgotten password
+
+router.post("/forgotpassword", (req, res) => {
+
+  if (!req.body.password || !req.body.security_ans || !req.body.email) {
+    console.log('Invalid Input');
+    return res.status(400).json({ message: "Invalid Inputs.", success: false });
+  }
+
+  users.findOne({ email: req.body.email }).then((user) => {
+
+    if (req.body.security_ans === user.security_ans) {
+      console.log('Correct answer');
+      bcrypt.compare(req.body.password, user.password).then((passwordCheck) => {
+        if (!passwordCheck) {
+          console.log(passwordCheck);
+          bcrypt.hash(req.body.password, 10, function (err, hash) {
+            if (err) {
+              return next(err);
+            }
+            user.password = hash;
+            user.save();
+          });
+
+          return res.status(200).json({
+            message: "Password Updated Successfully!!",
+            success: true
+          });
+        } else {
+          return res.status(400).json({
+            message: "Old password cannot be same as new password",
+            success: false
+          });
+        }
+      }).catch((error) => {
+        console.log(error);
+      });
+
+    } else {
+      return res.status(400).send({
+        message: "Security answer is incorrect, Try again!",
+        success: false
+      });
+
+    }
+
+  }).catch((e) => {
+    return res.status(400).send({
+      message: "Try again!",
+      success: false
+    });
+  });
+
+})
+
+
 //To update address
 router.post("/updateaddress", (req, res) => {
 
-  if (!req.body.address) {
+  if (!req.body.address || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -229,7 +270,7 @@ router.post("/delete", (req, res) => {
 //To update Name
 router.post("/updatename", (req, res) => {
 
-  if (!req.body.first_name || !req.body.last_name) {
+  if (!req.body.first_name || !req.body.last_name || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -257,7 +298,7 @@ router.post("/updatename", (req, res) => {
 //To update email
 router.post("/updateemail", (req, res) => {
 
-  if (!req.body.email) {
+  if (!req.body.email || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
   users.findOne({ user_id: req.body.user_id }).then((user) => {
@@ -284,7 +325,7 @@ router.post("/updateemail", (req, res) => {
 
 router.post("/updatepassword", (req, res) => {
 
-  if (!req.body.oldpassword || !req.body.newpassword) {
+  if (!req.body.oldpassword || !req.body.newpassword || !req.body.user_id) {
     return res.status(400).json({ message: "Invalid Inputs.", success: false });
   }
 
