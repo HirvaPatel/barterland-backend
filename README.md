@@ -10,5 +10,5 @@
         /api/model             ||   users.js                    ||   Sowjanya Mani           ||
         /api/routes            ||   users.js                    ||   Sowjanya Mani           ||
                                ||                               ||                           ||
-                               ||                               ||                           ||
+        /Wishlist/route        ||   wishlistRoute.js            ||   Shivam Barot            ||
                                ||                               ||                           || 
