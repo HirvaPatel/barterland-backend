@@ -10,6 +10,7 @@ app.use(express.json());
 const router = express.Router();
 
 router.get("", (req, res) => {
+  const user_id = req.headers.user_id;
   mongo.connectDB(async (err) => {
     if (err) throw err;
 
@@ -17,7 +18,7 @@ router.get("", (req, res) => {
     const db = mongo.getDatabase();
     const adsCollection = db
       .collection("advertisments")
-      .find()
+      .find({ user_id: { $eq: user_id } })
       .toArray()
       .then((results) => {
         console.log(results);
