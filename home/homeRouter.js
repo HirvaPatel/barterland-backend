@@ -1,3 +1,5 @@
+/* Author : Vikram Babu Rajendran */
+
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
@@ -7,9 +9,13 @@ const router = express.Router();
 
 var mongo = require('../mongo');
 
+// Connect to DB; To use with all the API's
 mongo.connectDB(async (err) => {
     if (err) throw err;
 
+    // Get Ads to display in Home Page.
+    // Input : None
+    // Output : List of Ads.
     router.get("/posts", (req, res) => {
 
         const db = mongo.getDatabase();
@@ -39,6 +45,9 @@ mongo.connectDB(async (err) => {
             });
     });
 
+    //Get one Ad
+    // Input : Ad ID [In params]
+    // Ad details.
     router.get("/posts/:id", (req, res) => {
 
         const ad_id = req.params.id;
@@ -86,6 +95,9 @@ mongo.connectDB(async (err) => {
 
     });
 
+    // Propose a deal.
+    // Input : Deal details [In request body]
+    // Output : Status
     router.post("/posts/:id/deals", (req, res) => {
 
         const ad_id = req.params.id;
@@ -157,6 +169,9 @@ mongo.connectDB(async (err) => {
             });
     });
 
+    // Deal a proposed deal
+    // Input : Ad ID and Deal ID [In params]
+    // Output : Status
     router.delete("/posts/:id/deals/:deal_id", (req, res) => {
         const ad_id = req.params.id;
         const deal_id = req.params.deal_id;
