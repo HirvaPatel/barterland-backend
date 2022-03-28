@@ -6,4 +6,9 @@
         /home                  ||  homeRouter.js                ||  Vikram Babu Rajendran    ||
         /deals                 ||  dealsRouter.js               ||  Vikram Babu Rajendran    ||
         /                      ||  mongo.js                     ||  Vikram Babu Rajendran    ||
-        
+                               ||                               ||                           ||
+        /api/model             ||   users.js                    ||   Sowjanya Mani           ||
+        /api/routes            ||   users.js                    ||   Sowjanya Mani           ||
+                               ||                               ||                           ||
+                               ||                               ||                           ||
+                               ||                               ||                           || 
