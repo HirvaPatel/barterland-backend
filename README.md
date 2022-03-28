@@ -11,4 +11,7 @@
         /api/routes            ||   users.js                    ||   Sowjanya Mani           ||
                                ||                               ||                           ||
         /Wishlist/route        ||   wishlistRoute.js            ||   Shivam Barot            ||
-                               ||                               ||                           || 
+                               ||                               ||                           ||
+        /myAds                 ||   deleteMyAdRoute.js          ||   Hirva Patel             ||
+        /myAds                 ||   getMyAdsRoute.js            ||   Hirva Patel             ||
+        /myAds                 ||   updateMyAdRoute.js          ||   Hirva Patel             ||
