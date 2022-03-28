@@ -3,12 +3,14 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+
 const router = express.Router();
 const uuid = require("uuid");
 
 var users = require('../model/users')
 console.log(users);
 
+var mongo = require('../../mongo');
 
 //Mongoose connedtion
 const mongoUrl = 'mongodb+srv://admin:Password123@barterland-g16-web-proj.bypz4.mongodb.net/barterland?retryWrites=true&w=majority';
@@ -392,6 +394,20 @@ router.get('/users', (req, res) => {
 
 })
 
+//to get users by id
+router.get("/users/:user_id", async (req, res) => {
+
+  mongo.connectDB(async (err) => {
+      if (err) throw err;
+
+      var wishlistproducts = [];
+      const userid = req.params.user_id;
+      const db = mongo.getDatabase();
+
+      const user = await db.collection('users').find({ "user_id": userid }).toArray();
+      return res.status(200).json({ success: "true", user: user });
+  });
+});
 
 
 module.exports = router;
