@@ -1,3 +1,5 @@
+/* Author : Vikram Babu Rajendran */
+
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
@@ -7,14 +9,19 @@ const router = express.Router();
 
 var mongo = require('../mongo');
 
+// Connect to the DB; To use with all the API's
 mongo.connectDB(async (err) => {
     if (err) throw err;
 
+    // Get All the deals made by the user. 
+    // Input : user_id [ in header ]
+    // Output : List of deals.
     router.get("/mydeals", (req, res) => {
 
         const user_id = req.headers.user_id;
         const db = mongo.getDatabase();
 
+        // Parse through all the Ads and filter the deals with the given user_id
         db.collection('advertisments').aggregate([{
             $project: {
                 _id: 0,
