@@ -10,5 +10,5 @@ This file contains the list of files and their authors.
     /api/model             ||   users.js                    ||   Sowjanya Mani           ||
     /api/routes            ||   users.js                    ||   Sowjanya Mani           ||
                            ||                               ||                           ||
-                           ||                               ||                           ||
+    /Wishlist/route        ||   wishlistRoute.js            ||   Shivam Barot            ||
                            ||                               ||                           ||
