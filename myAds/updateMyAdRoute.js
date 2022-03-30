@@ -1,3 +1,6 @@
+/*
+ * @author Hirva Patel hirva.patel@dal.ca
+ * */
 const req = require("express/lib/request");
 const res = require("express/lib/response");
 

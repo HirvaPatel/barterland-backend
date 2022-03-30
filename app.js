@@ -10,6 +10,7 @@ const dealsRouter = require("./deals/dealsRouter");
 const myAdsRoute = require("./myAds/getMyAdsRoute");
 const updateMyAdRoute = require("./myAds/updateMyAdRoute");
 const deleteMyRoute = require("./myAds/deleteMyAdRoute");
+const getAllAdsRoute = require("./admin/getAllAdsRoute");
 const rootRoute = "/api";
 
 const app = express();
@@ -27,6 +28,10 @@ app.use(rootRoute, UserRoute);
 
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
+<<<<<<< HEAD
+=======
+app.use("/ads", getAllAdsRoute);
+>>>>>>> origin/develop
 app.use("/myads", myAdsRoute);
 app.use("/updatemyad", updateMyAdRoute);
 app.use("/deletemyad", deleteMyRoute);
