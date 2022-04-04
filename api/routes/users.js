@@ -15,7 +15,7 @@ console.log(users);
 var mongo = require('../../mongo');
 
 //Mongoose connedtion
-const mongoUrl = 'mongodb+srv://admin:Password123@barterland-g16-web-proj.bypz4.mongodb.net/barterland?retryWrites=true&w=majority';
+const mongoUrl = 'mongodb+srv://admin:Password123@barterland-dev.ljvc7.mongodb.net/barterland?retryWrites=true&w=majority';
 
 mongoose.connect(mongoUrl, { useNewUrlParser: true })
   .then(() => {
