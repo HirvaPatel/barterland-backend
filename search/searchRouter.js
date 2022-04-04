@@ -1,3 +1,5 @@
+//Author: Sowjanya Mani
+
 const express = require("express");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
@@ -7,7 +9,7 @@ const router = express.Router();
 
 var mongo = require('../mongo');
 
-
+// Endpoint to return the search results
 mongo.connectDB(async (err) => {
     if (err) throw err;
     const db = mongo.getDatabase();
