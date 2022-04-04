@@ -14,8 +14,8 @@ mongo.connectDB(async (err) => {
 
     const collection = db.collection("advertisments")
 
-    router.get('/getad/:value', async (req, res) => {
-        const value = req.params.value;
+    router.post('/getad', async (req, res) => {
+        const value = req.body.value;
 
         let filtervalue = new RegExp(["^", value, "$"].join(""), "i");
         console.log(filtervalue);
@@ -24,20 +24,12 @@ mongo.connectDB(async (err) => {
         console.log(value);
         collection.find({ $text: { $search: value } }).toArray().then((results) => {
             console.log(results.length);
-             
-            if (results.length > 0) {
-                const response = {
-                    success: true,
-                    data: results,
-                };
-                return res.status(200).json(response);
-            }
+
             const response = {
-                success: false,
-                data: null,
-                message: "No product found!"
+                success: true,
+                data: results,
             };
-            return res.status(400).json(response);
+            return res.status(200).json(response);
         })
             .catch((error) => {
                 console.error(error);
