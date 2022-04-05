@@ -19,7 +19,7 @@ mongo.connectDB(async (err) => {
     const db = mongo.getDatabase();
     const usersCollection = db
       .collection("advertisments")
-      .find()
+      .find({})
       .limit(12)
       .toArray()
       .then((results) => {
@@ -143,6 +143,7 @@ mongo.connectDB(async (err) => {
               location: request.location,
               value: "",
               valid_till: "",
+              status: "PROPOSED"
             },
           };
 
