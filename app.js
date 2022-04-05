@@ -14,6 +14,7 @@ const getAllAdsRoute = require("./admin/getAllAdsRoute");
 const rootRoute = "/api";
 const searchRouter = require("./search/searchRouter");
 
+
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -27,6 +28,7 @@ const blogRoute = require("./Blog/routes/blogRoute");
 
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
+
 
 app.use("/search", searchRouter);
 app.use("/home", homeRouter);
