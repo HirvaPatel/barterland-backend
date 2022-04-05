@@ -23,11 +23,12 @@ app.use(express.json());
 var mongo = require("./mongo");
 
 const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
+const blogRoute = require("./Blog/routes/blogRoute");
 
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
 
-app.use("/search",searchRouter);
+app.use("/search", searchRouter);
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
 app.use("/ads", getAllAdsRoute);
@@ -35,6 +36,7 @@ app.use("/myads", myAdsRoute);
 app.use("/updatemyad", updateMyAdRoute);
 app.use("/deletemyad", deleteMyRoute);
 app.use("/wishlist", wishlistRoute);
+app.use("/blog", blogRoute);
 
 app.use(function (req, res) {
   res.status(404);
