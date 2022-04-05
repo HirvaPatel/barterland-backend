@@ -13,8 +13,7 @@ const deleteMyRoute = require("./myAds/deleteMyAdRoute");
 const getAllAdsRoute = require("./admin/getAllAdsRoute");
 const rootRoute = "/api";
 const searchRouter = require("./search/searchRouter");
-const aboutusRouter= require("./aboutus/aboutusRouter")
-const contactusRouter = require("./contactus/contactusRouter")
+
 
 const app = express();
 
@@ -29,8 +28,7 @@ const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
 
-app.use("/contactus",contactusRouter);
-app.use("/aboutus", aboutusRouter);
+
 app.use("/search", searchRouter);
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
