@@ -27,7 +27,7 @@ const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
 
-app.use("/search",searchRouter);
+app.use("/search", searchRouter);
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
 app.use("/ads", getAllAdsRoute);
@@ -35,6 +35,9 @@ app.use("/myads", myAdsRoute);
 app.use("/updatemyad", updateMyAdRoute);
 app.use("/deletemyad", deleteMyRoute);
 app.use("/wishlist", wishlistRoute);
+
+const notificationRoute = require('./notifications/notificationRouter');
+app.use("/notification", notificationRoute);
 
 app.use(function (req, res) {
   res.status(404);
