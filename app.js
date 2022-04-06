@@ -14,7 +14,12 @@ const getAllAdsRoute = require("./admin/getAllAdsRoute");
 const postMyAdsRoute = require("./myAds/postMyAdsRoute");
 const rootRoute = "/api";
 const searchRouter = require("./search/searchRouter");
-
+const feedbackRouter = require("./feedback/getFeedbacksRoute");
+const getSellerRouter = require("./feedback/getSellerForFeedback");
+const getAdvertisementsRouter = require("./feedback/getAdForFeedback");
+const updateFeedbackRouter = require("./feedback/updateFeedbackRoute");
+const deleteFeedbackRouter = require("./feedback/deleteFeedback");
+const createFeedbackRouter = require("./feedback/createFeedback");
 
 const app = express();
 
@@ -29,7 +34,6 @@ const blogRoute = require("./Blog/routes/blogRoute");
 
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
-
 
 app.use("/search", searchRouter);
 app.use("/home", homeRouter);
