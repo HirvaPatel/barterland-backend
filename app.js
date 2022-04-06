@@ -12,6 +12,13 @@ const updateMyAdRoute = require("./myAds/updateMyAdRoute");
 const deleteMyRoute = require("./myAds/deleteMyAdRoute");
 const getAllAdsRoute = require("./admin/getAllAdsRoute");
 const rootRoute = "/api";
+const searchRouter = require("./search/searchRouter");
+const feedbackRouter = require("./feedback/getFeedbacksRoute");
+const getSellerRouter = require("./feedback/getSellerForFeedback");
+const getAdvertisementsRouter = require("./feedback/getAdForFeedback");
+const updateFeedbackRouter = require("./feedback/updateFeedbackRoute");
+const deleteFeedbackRouter = require("./feedback/deleteFeedback");
+const createFeedbackRouter = require("./feedback/createFeedback");
 
 const app = express();
 
@@ -26,16 +33,20 @@ const wishlistRoute = require("./Wishlist/routes/wishlistRoute");
 const UserRoute = require("./api/routes/users");
 app.use(rootRoute, UserRoute);
 
+app.use("/search", searchRouter);
 app.use("/home", homeRouter);
 app.use("/deals", dealsRouter);
-<<<<<<< HEAD
-=======
 app.use("/ads", getAllAdsRoute);
->>>>>>> origin/develop
 app.use("/myads", myAdsRoute);
 app.use("/updatemyad", updateMyAdRoute);
 app.use("/deletemyad", deleteMyRoute);
 app.use("/wishlist", wishlistRoute);
+app.use("/feedback", feedbackRouter);
+app.use("/seller", getSellerRouter);
+app.use("/advertisements", getAdvertisementsRouter);
+app.use("/updateFeedback", updateFeedbackRouter);
+app.use("/deleteFeedback", deleteFeedbackRouter);
+app.use("/createFeedback", createFeedbackRouter);
 
 app.use(function (req, res) {
   res.status(404);
