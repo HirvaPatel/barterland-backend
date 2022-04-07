@@ -33,8 +33,9 @@ router.put("", (req, res) => {
 
     //connect to the mongo database
     const db = mongo.getDatabase();
-    const adsCollection = db
-      .collection("feedback")
+
+    //update feedback in the database
+    db.collection("feedback")
       .findOneAndUpdate(filter, updateDoc, updateOptions)
       .then((results) => {
         console.log(results);

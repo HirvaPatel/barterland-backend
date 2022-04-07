@@ -22,8 +22,9 @@ router.get("", (req, res) => {
 
     //connect to mongo database
     const db = mongo.getDatabase();
-    const adsCollection = db
-      .collection("feedback")
+
+    //get the feedbacks for a particular user with the help of user id
+    db.collection("feedback")
       .find({ user_id: { $eq: user_id } })
       .toArray()
       .then((results) => {

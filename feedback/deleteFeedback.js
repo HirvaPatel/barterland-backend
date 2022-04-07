@@ -21,8 +21,9 @@ router.delete("", (req, res) => {
 
     //connect to the mongo database
     const db = mongo.getDatabase();
-    const adsCollection = db
-      .collection("feedback")
+
+    //delete a feedback from the database
+    db.collection("feedback")
       .remove(filter)
       .then((results) => {
         return res.status(200).json({

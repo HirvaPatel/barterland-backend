@@ -21,8 +21,9 @@ router.get("", (req, res) => {
 
     //connect to mongo database
     const db = mongo.getDatabase();
-    const adsCollection = db
-      .collection("advertisments")
+
+    //get the advertisement details with the help of ad id
+    db.collection("advertisments")
       .find({ ad_id: { $eq: advertisment_id } })
       .toArray()
       .then((results) => {
@@ -30,7 +31,7 @@ router.get("", (req, res) => {
         return res.status(200).json({
           message: "Advertisements retrieved",
           success: true,
-          advertisements: results,
+          advertisements: results[0],
         });
       })
       .catch((error) => console.error(error));

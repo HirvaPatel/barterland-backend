@@ -21,8 +21,9 @@ router.get("", (req, res) => {
 
     //connect to mongo database
     const db = mongo.getDatabase();
-    const adsCollection = db
-      .collection("users")
+
+    //get the seller details from user table with the help of user id
+    db.collection("users")
       .find({ user_id: { $eq: seller_id } })
       .toArray()
       .then((results) => {

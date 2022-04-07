@@ -45,8 +45,14 @@ app.use("/deletemyad", deleteMyRoute);
 app.use("/postmyad", postMyAdsRoute);
 app.use("/wishlist", wishlistRoute);
 app.use("/blog", blogRoute);
+app.use("/feedback", feedbackRouter);
+app.use("/seller", getSellerRouter);
+app.use("/advertisements", getAdvertisementsRouter);
+app.use("/updateFeedback", updateFeedbackRouter);
+app.use("/deleteFeedback", deleteFeedbackRouter);
+app.use("/createFeedback", createFeedbackRouter);
 
-const notificationRoute = require('./notifications/notificationRouter');
+const notificationRoute = require("./notifications/notificationRouter");
 app.use("/notification", notificationRoute);
 
 app.use(function (req, res) {

@@ -32,6 +32,7 @@ router.post("", (req, res) => {
     //connect to the mongo database
     const db = mongo.getDatabase();
 
+    //get advertisements with the help of product name
     await db
       .collection("advertisments")
       .find({ "ad_details.title": { $eq: productName } })
@@ -41,6 +42,7 @@ router.post("", (req, res) => {
       })
       .catch((error) => console.error(error));
 
+    // get seller details from the user table with the help of seller name
     await db
       .collection("users")
       .find({ first_name: { $eq: sellerName } })
@@ -50,6 +52,7 @@ router.post("", (req, res) => {
       })
       .catch((error) => console.error(error));
 
+    //create new entry for the feedback
     await db
       .collection("feedback")
       .insertOne(newBody)
