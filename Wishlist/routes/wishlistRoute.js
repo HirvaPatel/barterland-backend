@@ -17,7 +17,7 @@ wishlistRouter.get("/user/:id", async (req, res) => {
         const db = mongo.getDatabase();
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
-        if (user) {
+        if (user && user.length > 0) {
             const ids = user[0]["wishlist"];
             for (let i = 0; i < ids.length; i++) {
 
