@@ -53,7 +53,7 @@ mongo.connectDB(async (err) => {
             .updateMany(
                 { user_id: user_id },
                 { $set: { "is_seen": true } },
-                { upsert: true }
+                { upsert: false }
             ).then((results) => {
                 console.log(results);
             })

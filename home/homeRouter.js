@@ -19,7 +19,7 @@ mongo.connectDB(async (err) => {
     const db = mongo.getDatabase();
     const usersCollection = db
       .collection("advertisments")
-      .find({})
+      .find({}).sort({ $natural: -1 })
       .limit(12)
       .toArray()
       .then((results) => {
