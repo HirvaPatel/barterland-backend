@@ -23,7 +23,7 @@ wishlistRouter.get("/user/:id", async (req, res) => {
             const product = await db.collection('advertisments').find({ "ad_id": ids[i] }).toArray();
             wishlistproducts.push(product[0]);
         }
-        console.log(wishlistproducts[0].ad_details);
+        // console.log(wishlistproducts[0].ad_details);
         return res.status(200).json({ success: "true", data: wishlistproducts });
     });
 });
