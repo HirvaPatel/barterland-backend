@@ -138,7 +138,7 @@ mongo.connectDB(async (err) => {
               mobile: request.mobile,
               title: request.title,
               description: request.description,
-              image_url: "",
+              image_url: request.image,
               created_at: Date.now(),
               location: request.location,
               value: "",
