@@ -17,11 +17,13 @@ wishlistRouter.get("/user/:id", async (req, res) => {
         const db = mongo.getDatabase();
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
-        const ids = user[0]["wishlist"];
-        for (let i = 0; i < ids.length; i++) {
+        if (user) {
+            const ids = user[0]["wishlist"];
+            for (let i = 0; i < ids.length; i++) {
 
-            const product = await db.collection('advertisments').find({ "ad_id": ids[i] }).toArray();
-            wishlistproducts.push(product[0]);
+                const product = await db.collection('advertisments').find({ "ad_id": ids[i] }).toArray();
+                wishlistproducts.push(product[0]);
+            }
         }
         // console.log(wishlistproducts[0].ad_details);
         return res.status(200).json({ success: "true", data: wishlistproducts });
