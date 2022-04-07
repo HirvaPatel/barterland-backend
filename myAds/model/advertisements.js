@@ -1,3 +1,4 @@
+// Author :Hardik Mesvania (hr860663@dal.ca)
 const mongoose = require("mongoose");
 
 const AdsSchema = {
