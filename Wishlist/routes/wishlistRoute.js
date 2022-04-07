@@ -18,13 +18,12 @@ wishlistRouter.get("/user/:id", async (req, res) => {
 
         const user = await db.collection('users').find({ "user_id": userid }, { "wishlist": 1 }).toArray();
         const ids = user[0]["wishlist"];
-
         for (let i = 0; i < ids.length; i++) {
 
             const product = await db.collection('advertisments').find({ "ad_id": ids[i] }).toArray();
             wishlistproducts.push(product[0]);
         }
-        console.log(wishlistproducts);
+        console.log(wishlistproducts[0].ad_details);
         return res.status(200).json({ success: "true", data: wishlistproducts });
     });
 });
@@ -32,7 +31,7 @@ wishlistRouter.get("/user/:id", async (req, res) => {
 // Removing specific item from the wishlist
 wishlistRouter.put("/remove/:id", async (req, res) => {
 
-    let productid = parseInt(req.params.id);
+    let productid = req.params.id;
 
     mongo.connectDB(async (err) => {
         if (err) throw err;
@@ -62,12 +61,11 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
 // Adding specific item in the wishlist
 wishlistRouter.put("/add/:id", async (req, res) => {
 
-    let productid = parseInt(req.params.id);
+    let productid = req.params.id;
 
     mongo.connectDB(async (err) => {
         if (err) throw err;
 
-        var wishlistproducts = [];
         const userid = req.headers.user_id;
         const db = mongo.getDatabase();
 
