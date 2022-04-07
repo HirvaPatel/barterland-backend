@@ -46,6 +46,9 @@ app.use("/postmyad", postMyAdsRoute);
 app.use("/wishlist", wishlistRoute);
 app.use("/blog", blogRoute);
 
+const notificationRoute = require('./notifications/notificationRouter');
+app.use("/notification", notificationRoute);
+
 app.use(function (req, res) {
   res.status(404);
   const response = {

@@ -72,6 +72,186 @@ mongo.connectDB(async (err) => {
         return res.status(200).json(response);
       });
   });
+
+  // Get Deals
+  router.get("/mydeals/:ad_id", (req, res) => {
+    const user_id = req.headers.user_id;
+    const db = mongo.getDatabase();
+    const ad_id = req.params.ad_id;
+    console.log('AD ID -' + (ad_id));
+
+    db.collection("advertisments")
+      .findOne({ ad_id: ad_id })
+      .then((results) => {
+        console.log(results);
+        if (results) {
+          const response = {
+            success: true,
+            data: results
+          };
+          return res.status(200).json(response);
+        }
+        const response = {
+          success: false,
+          message: "Ad not found!",
+        };
+        return res.status(400).json(response);
+      })
+      .catch((error) => {
+        console.error(error);
+        const response = {
+          success: false,
+          message: "Something went wrong.",
+        };
+        return res.status(500).json(response);
+      });
+  });
+
+
+  // Accept - Reject Deal
+  router.post("/mydeals/:ad_id/:deal_id", (req, res) => {
+    const user_id = req.headers.user_id;
+    console.log(user_id);
+    const db = mongo.getDatabase();
+    const ad_id = req.params.ad_id;
+    const deal_id = req.params.deal_id;
+    console.log('AD ID -' + (ad_id));
+    const deal_status = req.body.status;
+
+    if (deal_status && (deal_status !== 'ACCEPTED' && deal_status !== 'REJECTED')) {
+      const response = {
+        success: false,
+        message: "Invalid input parameters",
+      };
+      return res.status(400).json(response);
+    }
+
+    let adStatus = 'OPEN';
+    if (deal_status === 'ACCEPTED') {
+      adStatus = 'DEAL_ACCEPTED';
+    }
+
+    const filter = { ad_id: ad_id, "deals.deal_id": deal_id };
+    const updateOptions = { upsert: true };
+    const updateDeal = {
+      $set: {
+        "deals.$.deal_details.status": deal_status,
+        "ad_details.status": adStatus
+      },
+    };
+
+    db.collection("advertisments")
+      .findOneAndUpdate(filter, updateDeal, updateOptions, {
+        returnNewDocument: true,
+      })
+      .then((results) => {
+        console.log(results);
+      }).catch((error) => {
+        console.error(error);
+        const response = {
+          success: false,
+          message: "Something went wrong.",
+        };
+        return res.status(500).json(response);
+      });
+
+
+    // Add Notification
+    let notification_type = 'DEAL_REJECTED';
+    if (deal_status === 'ACCEPTED') {
+      notification_type = 'DEAL_ACCEPTED';
+    }
+    let deal_user_id;
+    db.collection("advertisments")
+      .findOne({ ad_id: ad_id, "deals.deal_id": deal_id })
+      .then((results) => {
+        console.log(results);
+        if (results) {
+          const deals = results.deals;
+          for (let i = 0; i < deals.length; i++) {
+            if (deals[i].deal_id === deal_id) {
+              const deal = deals[i];
+              deal_user_id = deal.user_id;
+            }
+          }
+          db.collection("notifications").insertOne({
+            user_id: deal_user_id,
+            is_seen: false,
+            notification: {
+              type: notification_type,
+              ad_id: ad_id,
+              deal_id: deal_id,
+              message: 'There is an update on your deal !'
+            }
+          }).then((results) => {
+            console.log(results);
+          }).catch((error) => {
+            console.error(error);
+          });
+
+        }
+      });
+
+    const response = {
+      success: true,
+      message: "Status Updated",
+    };
+    return res.status(200).json(response);
+
+  });
+
+
+  // Get individual Deal
+  router.get('/mydeals/:ad_id/:deal_id', (req, res) => {
+
+    const user_id = req.headers.user_id;
+    const db = mongo.getDatabase();
+    const ad_id = req.params.ad_id;
+    const deal_id = req.params.deal_id;
+
+    db.collection("advertisments")
+      .findOne({ ad_id: ad_id, "deals.deal_id": deal_id })
+      .then((results) => {
+        console.log(results);
+        if (results) {
+          const deals = results.deals;
+          for (let i = 0; i < deals.length; i++) {
+            if (deals[i].deal_id === deal_id) {
+              const deal = deals[i];
+              const data = {
+                ad_id: results.ad_id,
+                ad_details: results.ad_details,
+                deal: deal
+              }
+              const response = {
+                success: true,
+                data: data
+              };
+              return res.status(200).json(response);
+            }
+          }
+        }
+
+        const response = {
+          success: false,
+          message: "Deal not found!",
+        };
+        return res.status(400).json(response);
+      })
+      .catch((error) => {
+        console.error(error);
+        const response = {
+          success: false,
+          message: "Something went wrong.",
+        };
+        return res.status(500).json(response);
+      });
+  });
+
+
 });
+
+
+
 
 module.exports = router;

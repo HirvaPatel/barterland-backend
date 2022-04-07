@@ -19,7 +19,7 @@ mongo.connectDB(async (err) => {
     const db = mongo.getDatabase();
     const usersCollection = db
       .collection("advertisments")
-      .find()
+      .find({})
       .limit(12)
       .toArray()
       .then((results) => {
@@ -57,7 +57,7 @@ mongo.connectDB(async (err) => {
     const user_id = req.headers.user_id;
     const db = mongo.getDatabase();
     db.collection("advertisments")
-      .findOne({ ad_id: parseInt(ad_id) })
+      .findOne({ ad_id: ad_id })
       .then((results) => {
         console.log(results);
         if (results) {
@@ -125,7 +125,7 @@ mongo.connectDB(async (err) => {
     }
 
     db.collection("advertisments")
-      .findOne({ ad_id: parseInt(ad_id) })
+      .findOne({ ad_id: ad_id })
       .then((results) => {
         console.log(results);
         if (results) {
@@ -138,17 +138,18 @@ mongo.connectDB(async (err) => {
               mobile: request.mobile,
               title: request.title,
               description: request.description,
-              image_url: "",
+              image_url: request.image,
               created_at: Date.now(),
               location: request.location,
               value: "",
               valid_till: "",
+              status: "PROPOSED"
             },
           };
 
           const result = db
             .collection("advertisments")
-            .updateOne({ ad_id: parseInt(ad_id) }, { $push: { deals: deal } })
+            .updateOne({ ad_id: ad_id }, { $push: { deals: deal } })
             .then((result) => {
               console.log("Updated!");
             })
@@ -160,6 +161,30 @@ mongo.connectDB(async (err) => {
               };
               return res.status(500).json(response);
             });
+
+
+          db.collection("advertisments")
+            .findOne({ ad_id: ad_id })
+            .then((results) => {
+              console.log(results);
+              if (results) {
+                db.collection("notifications").insertOne({
+                  user_id: results.user_id,
+                  is_seen: false,
+                  notification: {
+                    type: 'DEAL_PROPOSED',
+                    ad_id: results.ad_id,
+                    deal_id: null,
+                    message: 'Someone proposed a deal!'
+                  }
+                }).then((results) => {
+                  console.log(results);
+                }).catch((error) => {
+                  console.error(error);
+                });
+              }
+            });
+
           const response = {
             success: true,
             message: "Deal proposed!",
@@ -182,7 +207,7 @@ mongo.connectDB(async (err) => {
       });
   });
 
-  // Deal a proposed deal
+  // Delete a proposed deal
   // Input : Ad ID and Deal ID [In params]
   // Output : Status
   router.delete("/posts/:id/deals/:deal_id", (req, res) => {
@@ -190,14 +215,14 @@ mongo.connectDB(async (err) => {
     const deal_id = req.params.deal_id;
     const db = mongo.getDatabase();
     db.collection("advertisments")
-      .findOne({ ad_id: parseInt(ad_id) })
+      .findOne({ ad_id: ad_id })
       .then((results) => {
         console.log(results);
         if (results) {
           const result = db
             .collection("advertisments")
             .updateOne(
-              { ad_id: parseInt(ad_id), "deals.deal_id": deal_id },
+              { ad_id: ad_id, "deals.deal_id": deal_id },
               { $set: { "deals.$.is_active": false } }
             )
             .then((result) => {
