@@ -47,6 +47,7 @@ wishlistRouter.put("/remove/:id", async (req, res) => {
 
         ids = ids.filter(item => item !== productid);
 
+        console.log(ids );
         const user2 = await db.collection('users').updateOne({ "user_id": userid }, { $set: { "wishlist": ids } });
 
         for (let i = 0; i < ids.length; i++) {
